@@ -12,8 +12,15 @@ import {
 } from "@nextui-org/react";
 
 export default function Home() {
-  const [password, setPassword] = useState("");
-  const [setting, setSetting] = useState({
+  const [password, setPassword] = useState<string>("");
+
+  const [setting, setSetting] = useState<{
+    length: number;
+    upper: boolean;
+    lower: boolean;
+    number: boolean;
+    symbol: boolean;
+  }>({
     length: 10,
     upper: true,
     lower: true,
@@ -21,19 +28,48 @@ export default function Home() {
     symbol: false,
   });
 
-  const generate = () => {};
+  const abc: string = Array.from({ length: 26 }, (_, i) =>
+    String.fromCodePoint(97 + i)
+  ).join("");
+
+  const parts: {
+    upper: string;
+    lower: string;
+    number: string;
+    symbol: string;
+  } = {
+    upper: abc.toUpperCase(),
+    lower: abc.toLowerCase(),
+    number: Array.from({ length: 10 }, (_, i) => i).join(""),
+    symbol: "!@#$%^&*()_+-=[]{}|;:',./<>?`~",
+  };
+
+  const generate = () => {
+    setPassword("");
+    const characters = Object.entries(setting)
+      .filter((i) => i.includes(true))
+      .map(([key]) => parts[key])
+      .join("");
+    for (let i = 0; i < setting.length; i++) {
+      if (characters.length > 0) {
+        setPassword(
+          (p) => p + characters[Math.floor(Math.random() * characters.length)]
+        );
+      }
+    }
+  };
 
   const change = (key: string, value: any) =>
     setSetting((p) => ({ ...p, [key]: value }));
 
   return (
     <main className="flex justify-center items-center h-dvh">
-      <Card className="w-80">
+      <Card className="w-96">
         <CardHeader>
           <h1 className="text-xl font-bold">Password Generator</h1>
         </CardHeader>
         <CardBody>
-          <div className="p-2 bg-neutral-800 rounded-xl text-2xl text-center font-black">
+          <div className="p-2 bg-neutral-800 rounded-xl text-base text-center font-black">
             {password === "" ? "Click Generate" : password}
           </div>
           <div className="my-1">
