@@ -48,7 +48,7 @@ export default function Home() {
     setPassword("");
     const characters = Object.entries(setting)
       .filter((i) => i.includes(true))
-      .map(([key]) => parts[key])
+      .map(([key]) => parts[key as keyof typeof parts])
       .join("");
     for (let i = 0; i < setting.length; i++) {
       if (characters.length > 0) {
